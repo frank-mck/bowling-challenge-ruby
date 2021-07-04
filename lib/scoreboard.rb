@@ -13,13 +13,23 @@ class Scoreboard
 
   def add_roll
     if @roll_num >= 3 && @frame_score < 10 
-      update_roll_and_frame_num
+      @roll_num = 1
+      @frame_num += 1
       frame_score
       add_roll
-    elsif @frame_num == 10
+    elsif @frame_num == 11
       end_game
-    elsif @frame_score == 10
-      get_players_score
+    elsif @frame_score == 10 && @roll_num == 2
+      @knocked_down_pins << 0
+      @knocked_down_pins << get_players_score
+      @knocked_down_pins << get_players_score
+      frame_score
+      @roll_num = 1
+    elsif @frame_score == 10 && @roll_num == 3
+      @knocked_down_pins << get_players_score
+      frame_score
+      @roll_num = 1
+      @frame_num += 1
     else
       @knocked_down_pins << get_players_score
     end
@@ -28,7 +38,6 @@ class Scoreboard
   private
 
   def get_players_score
-    @user_input = 0
     puts 'enter knocked down pins'
     @user_input = gets.chomp.to_i
     @roll_num += 1
@@ -37,7 +46,11 @@ class Scoreboard
   end
 
   def frame_score
-    @score_after_frame << @frame_score
+    if @score_after_frame.size > 0
+      @score_after_frame << @score_after_frame[-1] + @frame_score
+    else
+      @score_after_frame << @frame_score
+    end
     @total_score += @frame_score
     @frame_score = 0
   end
@@ -62,13 +75,6 @@ class Scoreboard
       get_players_score + get_players_score
     end
     return @knocked_down_pins[-1] + @knocked_down_pins[-2]
-  end
-
-  def add_spare_bonus
-      puts 'enter knocked down pins'
-      @user_input = gets.chomp.to_i
-      @knocked_down_pins << @user_input
-      @roll_num += 1
   end
 
   def spare_bonus_checker?
