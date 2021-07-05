@@ -12,19 +12,27 @@ class Scoreboard
   end
 
   def add_roll
+    if @roll_num == 3
+      @frame_num += 1
+    end
     if @roll_num >= 3 && @frame_score < 10 
       @roll_num = 1
-      @frame_num += 1
       frame_score
       add_roll
     elsif @frame_num == 11
       end_game
     elsif @frame_score == 10 && @roll_num == 2
-      @knocked_down_pins << 0
+    
       @knocked_down_pins << get_players_score
-      @knocked_down_pins << get_players_score
+      @frame_num += 1
       frame_score
       @roll_num = 1
+  
+      @knocked_down_pins << get_players_score
+      @frame_num += 1
+      frame_score
+      @roll_num = 1
+     
     elsif @frame_score == 10 && @roll_num == 3
       @knocked_down_pins << get_players_score
       frame_score
@@ -46,8 +54,10 @@ class Scoreboard
   end
 
   def frame_score
-    if @score_after_frame.size > 0
+    if @score_after_frame.size > 0 && @user_input != 10
       @score_after_frame << @score_after_frame[-1] + @frame_score
+    elsif @user_input = 10 && @score_after_frame.size > 0
+      @score_after_frame << @score_after_frame[-1] + @frame_score + @knocked_down_pins[-1]
     else
       @score_after_frame << @frame_score
     end
